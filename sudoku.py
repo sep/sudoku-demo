@@ -59,6 +59,23 @@ class SudokuBoard:
         SudokuBoard.validate_coords(x,y)
         return 3 * (y // 3) + x // 3
 
+    @staticmethod
+    def from_string(string_of_board):
+        retBoard = SudokuBoard()
+        x = 0
+        y = 0
+        for row in string_of_board.split('\n'):
+            for cell in row.split(' '):
+                if cell == '_' or cell == '':
+                    continue
+                else:
+                    value = int(cell)
+                    retBoard.update_cell(x,y,value)
+                x += 1
+            y += 1
+            x = 0
+        return retBoard
+
     def get_legal_values(self, x, y):
         SudokuBoard.validate_coords(x,y)
         if self.cellValues[y][x] != BLANK:
