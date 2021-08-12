@@ -30,16 +30,20 @@ class SudokuBoard:
         assert(len(cp.blockSets) == 9)
         return cp
 
-    def pretty_print(self):
+    def to_string(self):
+        ret = ""
         for row in self.cellValues:
             for cell in row:
                 if cell == BLANK:
-                    print('_', end="")
+                    ret += '_'
                 else:
-                    print(cell, end="")
-                print(' ', end="")
-            print('\n')
-        print('\n')
+                    ret += str(cell)
+                ret += ' '
+            ret += '\n'
+        return ret
+
+    def pretty_print(self):
+        print(self.to_string())
 
     @staticmethod
     def validate_coords(x,y):
