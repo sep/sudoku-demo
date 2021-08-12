@@ -76,6 +76,12 @@ class SudokuBoard:
             x = 0
         return retBoard
 
+    @staticmethod
+    def from_file(path):
+        with open(path, 'r') as pipe:
+            string = pipe.read()
+            return SudokuBoard.from_string(string)
+
     def get_legal_values(self, x, y):
         SudokuBoard.validate_coords(x,y)
         if self.cellValues[y][x] != BLANK:
