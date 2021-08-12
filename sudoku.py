@@ -82,6 +82,11 @@ class SudokuBoard:
             string = pipe.read()
             return SudokuBoard.from_string(string)
 
+    def to_file(self, path):
+        output_string = self.to_string()
+        with open(path, 'w') as pipe:
+            pipe.write(output_string)
+
     def get_legal_values(self, x, y):
         SudokuBoard.validate_coords(x,y)
         if self.cellValues[y][x] != BLANK:
