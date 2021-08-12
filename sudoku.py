@@ -1,5 +1,6 @@
 ALL_NUMBERS = set(range(1,10))
 BLANK = 0
+BLANK_CHAR = '_'
 
 class SudokuBoard:
 
@@ -33,7 +34,7 @@ class SudokuBoard:
         for row in self.cellValues:
             for cell in row:
                 if cell == BLANK:
-                    ret += '_'
+                    ret += BLANK_CHAR
                 else:
                     ret += str(cell)
                 ret += ' '
@@ -66,7 +67,7 @@ class SudokuBoard:
         y = 0
         for row in string_of_board.split('\n'):
             for cell in row.split(' '):
-                if cell == '_' or cell == '':
+                if cell == BLANK_CHAR or cell == '':
                     continue
                 else:
                     value = int(cell)
