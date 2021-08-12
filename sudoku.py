@@ -3,26 +3,24 @@ BLANK = 0
 
 class SudokuBoard:
 
-    cellValues = []
-    rowSets = []
-    colSets = []
-    blockSets = []
-
     def __init__(self,make_blank=True):
-        if not make_blank:
-            return
-        for i in range(9):
-            self.cellValues.append([BLANK] * 9)
-            self.rowSets.append(ALL_NUMBERS.copy())
-            self.colSets.append(ALL_NUMBERS.copy())
-            self.blockSets.append(ALL_NUMBERS.copy())
+        self.cellValues = []
+        self.rowSets = []
+        self.colSets = []
+        self.blockSets = []
+        if make_blank:
+            for i in range(9):
+                self.cellValues.append([BLANK] * 9)
+                self.rowSets.append(ALL_NUMBERS.copy())
+                self.colSets.append(ALL_NUMBERS.copy())
+                self.blockSets.append(ALL_NUMBERS.copy())
 
     def copy(self):
         cp = SudokuBoard(make_blank=False)
         for y in range(9):
-            cp.rowSets[y] = self.rowSets[y].copy()
-            cp.colSets[y] = self.colSets[y].copy()
-            cp.blockSets[y] = self.blockSets[y].copy()
+            cp.rowSets.append(self.rowSets[y].copy())
+            cp.colSets.append(self.colSets[y].copy())
+            cp.blockSets.append(self.blockSets[y].copy())
         cp.cellValues = self.cellValues.copy()
         assert(len(cp.cellValues) == 9)
         assert(len(cp.rowSets) == 9)
