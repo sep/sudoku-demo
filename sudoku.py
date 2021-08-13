@@ -169,8 +169,106 @@ def solve_board(board):
                 if solution:
                     return solution
 
+def variable_number(x, y, value):
+    """
+    Returns the minisat variable number meaning 'The Cell (x,y) contains value'
+    """
+    SudokuBoard.validate_coords(x,y)
+    # +1 because 0 doesn't negate well
+    return y * 81 + x * 9 + (value - 1) + 1
+
+def assignment_of_number(variable_index):
+    variable_index = variable_index - 1
+    y = variable_index // 81
+    x = (variable_index - 81 * y) // 9
+    value = (variable_index - 81 * y - x * 9) + 1
+    SudokuBoard.validate_coords(x,y)
+    assert(value >= 1)
+    assert(value <= 9)
+    return { 'x' : x, 'y' : y, 'value' : value}
+
+def every_cell_has_some_value(x,y):
+    clause = []
+    for value in ALL_NUMBERS:
+        clause.append(variable_number(x,y,value))
+    return [clause]
+
+def every_cell_has_one_number(x,y):
+    clauses = []
+    for value_a in range(1,9):
+        for value_b in range(value_a + 1, 10):
+            variable_i = -1 * variable_number(x,y,value_a)
+            varibale_j = -1 * variable_number(x,y,value_b)
+            clause = [ variable_i, varibale_j]
+            clauses.append(clause)
+    return clauses
+
+def every_column_contains_every_number(x):
+    clauses = []
+    for value in ALL_NUMBERS:
+        clause = [] # Either 0,1 = 1 or 0,2 = 1 or 0,3 = 1...
+        for row in range(9):
+            clause.append(variable_number(x, row, value))
+        clauses.append(clause)
+    return clauses
+
+def every_row_contains_every_number(y):
+    clauses = []
+    for value in ALL_NUMBERS:
+        clause = [] # Either 1,0 = 1 or 2,0 = 1 or 3,0 = 1...
+        for col in range(9):
+            clause.append(variable_number(col, y, value))
+        clauses.append(clause)
+    return clauses
+
+def every_block_contains_every_number(index):
+    x_min = (index % 3) * 3
+    y_min = index // 3 * 3
+    clauses = []
+    for value in ALL_NUMBERS:
+        clause = []
+        for x in range(x_min, x_min + 3):
+            for y in range(y_min, y_min + 3):
+                clause.append(variable_number(x,y,value))
+        clauses.append(clause)
+    return clauses
+
+def base_board_formulation():
+    clauses = []
+    for x in range(9):
+        clauses += every_column_contains_every_number(x)
+        clauses += every_row_contains_every_number(x)
+        clauses += every_block_contains_every_number(x)
+        for y in range(9):
+            clauses += every_cell_has_some_value(x,y)
+            clauses += every_cell_has_one_number(x,y)
+    return clauses
+
+def initial_problem_constraints(board):
+    clauses = []
+    for x in range(9):
+        for y in range(9):
+            value = board.cellValues[y][x]
+            if value != BLANK:
+                variable = variable_number(x,y, value)
+                clauses.append([variable])
+    return clauses
+
+def emit_problem(board, path):
+    num_variables = 9 * 9 * 9
+    base_clauses = base_board_formulation()
+    problem_specific_clauses = initial_problem_constraints(board)
+    num_clauses = len(base_clauses) + len(problem_specific_clauses)
+    with open(path, 'w') as pipe:
+        pipe.write('p cnf {0} {1}\n'.format(num_variables, num_clauses))
+        for clause in problem_specific_clauses + base_clauses:
+            for element in clause:
+                pipe.write(str(element) + ' ')
+            pipe.write('\n')
+
 if __name__ == "__main__":
     board = SudokuBoard()
     board.pretty_print()
     solution = solve_board(board)
     solution.pretty_print()
+    emit_problem(SudokuBoard(), "test.cnf")
