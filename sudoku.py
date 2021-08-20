@@ -266,9 +266,28 @@ def emit_problem(board, path):
                 pipe.write(str(element) + ' ')
             pipe.write('0\n')
 
+def ingest_solution(path):
+    to_populate = SudokuBoard()
+    true_vars = []
+    with open(path, 'r') as pipe:
+        is_sat = pipe.readline()
+        true_vars = []
+        for line in pipe.readlines():
+            for variable in line.split(' '):
+                as_int = int(variable)
+                if as_int > 0:
+                    true_vars.append(as_int)
+        for variable in true_vars:
+            update = assignment_of_number(variable)
+            to_populate.update_cell(update['x'], update['y'], update['value'])
+    return to_populate
+    
+
 if __name__ == "__main__":
-    board = SudokuBoard()
-    board.pretty_print()
-    solution = solve_board(board)
-    solution.pretty_print()
-    emit_problem(SudokuBoard(), "test.cnf")
+    #board = SudokuBoard()
+    #board.pretty_print()
+    #solution = solve_board(board)
+    #solution.pretty_print()
+    #emit_problem(SudokuBoard(), "test.cnf")
+    solved = ingest_solution("results.sol")
+    solved.pretty_print()
