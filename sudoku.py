@@ -264,7 +264,7 @@ def emit_problem(board, path):
         for clause in problem_specific_clauses + base_clauses:
             for element in clause:
                 pipe.write(str(element) + ' ')
-            pipe.write('\n')
+            pipe.write('0\n')
 
 if __name__ == "__main__":
     board = SudokuBoard()
