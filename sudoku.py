@@ -198,8 +198,8 @@ def every_cell_has_one_number(x,y):
     for value_a in range(1,9):
         for value_b in range(value_a + 1, 10):
             variable_i = -1 * variable_number(x,y,value_a)
-            varibale_j = -1 * variable_number(x,y,value_b)
-            clause = [ variable_i, varibale_j]
+            variable_j = -1 * variable_number(x,y,value_b)
+            clause = [ variable_i, variable_j]
             clauses.append(clause)
     return clauses
 
